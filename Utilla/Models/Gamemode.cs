@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Utilla.Models
 {
@@ -29,7 +30,8 @@ namespace Utilla.Models
         /// <summary>
         /// Paintbrawl gamemode, a gamemode that lets you play a game of paintball with two or more players.
         /// </summary>
-        PaintbrawlBattle
+        Battle,
+		Ambush
 	}
 
 	public class Gamemode {
@@ -41,7 +43,7 @@ namespace Utilla.Models
 		public BaseGamemode BaseGamemode { get; }
 		public Type GameManager { get; }
 
-		public Gamemode(string id, string displayName, BaseGamemode baseGamemode = BaseGamemode.Infection)
+        public Gamemode(string id, string displayName, BaseGamemode baseGamemode = BaseGamemode.Infection)
 		{
 			this.ID = id;
 			this.DisplayName = displayName;
@@ -69,5 +71,21 @@ namespace Utilla.Models
 
 			GamemodeString = ID;
 		}
-	}
+
+        public static implicit operator ModeSelectButtonInfo(Gamemode gamemode)
+		{
+			return new ModeSelectButtonInfo()
+			{
+				Mode = gamemode.ID,
+				ModeTitle = gamemode.DisplayName,
+				NewMode = false,
+				CountdownTo = null
+			};
+		}
+
+		public static implicit operator Gamemode(ModeSelectButtonInfo modeSelectButtonInfo)
+		{
+			return new Gamemode(modeSelectButtonInfo.Mode, modeSelectButtonInfo.ModeTitle);
+		}
+    }
 }

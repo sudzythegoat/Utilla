@@ -106,7 +106,7 @@ namespace Utilla.Utils
 				joinTrigger.makeSureThisIsDisabled = Array.Empty<GameObject>();
 				joinTrigger.makeSureThisIsEnabled = Array.Empty<GameObject>();
 			}
-			joinTrigger.gameModeName = gameModeName;
+			joinTrigger.networkZone = gameModeName;
 			photonNetworkController.AttemptToJoinPublicRoom(joinTrigger);
 		}
 
