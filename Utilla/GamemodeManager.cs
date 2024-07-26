@@ -10,9 +10,9 @@ using UnityEngine.SceneManagement;
 using GorillaNetworking;
 using GorillaGameModes;
 using BepInEx;
-using HarmonyLib;
 
 using Utilla.Models;
+using System.Threading.Tasks;
 
 namespace Utilla
 {
@@ -139,15 +139,15 @@ namespace Utilla
             SceneManager.sceneLoaded += OnSceneChange;
 		}
 
-		void OnSceneChange(Scene scene, LoadSceneMode loadMode)
+		async void OnSceneChange(Scene scene, LoadSceneMode loadMode)
 		{
 			if (gameModeButtonsDict.TryGetValue(scene.name, out var buttonData))
 			{
+				await Task.Delay(100);
 				InitializeSelector(buttonData);
 			}
 		}
 
-        // void InitializeSelector(string name, Transform parent, string buttonPath, string gamemodesPath)
         GamemodeSelector InitializeSelector(GameModeSelectorPath gmPathData)
 		{
 			try
