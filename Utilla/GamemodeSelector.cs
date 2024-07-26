@@ -39,8 +39,6 @@ namespace Utilla
 
 			modeSelectButtons = buttons.Select(x => x.GetComponent<ModeSelectButton>()).ToArray();
 
-            baseSelectionInfo = (ModeSelectButtonInfo[])AccessTools.Field(layout.GetType(), "info").GetValue(layout);
-
             foreach (var mb in modeSelectButtons)
 			{
 				mb.transform.localPosition += Vector3.right * -0.055f;
@@ -52,6 +50,8 @@ namespace Utilla
 			}
 
 			layout = buttonLayout.GetComponent<GameModeSelectorButtonLayout>();
+
+            baseSelectionInfo = (ModeSelectButtonInfo[])AccessTools.Field(layout.GetType(), "info").GetValue(layout);
 
             CreatePageButtons(buttons.First().gameObject);
 
