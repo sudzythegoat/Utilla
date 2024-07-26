@@ -81,10 +81,10 @@ namespace Utilla
 				bool isInfection = bm.DisplayName.ToUpper() == "INFECTION";
 
                 string moddedTitle = isInfection ? "MODDED" : $"MODDED {bm.ID.ToUpper()}"; // i.e, INFECTION = MODDED, PAINTBRAWL (displayname) = MODDED BATTLE (id)
-				
-				BaseGamemode baseMode = isInfection ? BaseGamemode.Infection : Enum.Parse<BaseGamemode>(textInfo.ToTitleCase(bm.ID.ToLower())); // i.e (referencing the titlecase), INFECTION = Infection, PAINTBRAWL (displayname) = Paintbrawl
-				
-				moddedGamemodes.Add(new Gamemode(isInfection ? "MODDED_INFECTION" : moddedTitle.Replace(" ", "_"), moddedTitle, baseMode));
+
+                BaseGamemode baseMode = isInfection ? BaseGamemode.Infection : Enum.Parse<BaseGamemode>(textInfo.ToTitleCase(bm.ID.ToLower())); // i.e (referencing the titlecase), INFECTION = Infection, PAINTBRAWL (displayname) = Paintbrawl
+
+                moddedGamemodes.Add(new Gamemode("MODDED_", moddedTitle, baseMode));
             }
         }
 

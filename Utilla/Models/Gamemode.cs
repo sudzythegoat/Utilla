@@ -37,19 +37,34 @@ namespace Utilla.Models
 	public class Gamemode {
 		public const string GamemodePrefix = "MODDED_";
 
+		/// <summary>
+		/// The title of the Gamemode visible through the gamemode selector
+		/// </summary>
 		public string DisplayName { get; }
+
+		/// <summary>
+		/// The internal ID of the Gamemode
+		/// </summary>
 		public string ID { get; }
+
+		/// <summary>
+		/// The GamemodeString used in the CustomProperties of the Room
+		/// </summary>
 		public string GamemodeString { get; }
+
+		/// <summary>
+		/// The BaseGamemode being inherited
+		/// </summary>
 		public BaseGamemode BaseGamemode { get; }
 		public Type GameManager { get; }
 
-        public Gamemode(string id, string displayName, BaseGamemode baseGamemode = BaseGamemode.Infection)
+        public Gamemode(string id, string displayName, BaseGamemode baseGamemode = BaseGamemode.None)
 		{
-			this.ID = id;
-			this.DisplayName = displayName;
-			this.BaseGamemode = baseGamemode;
+			ID = id + (baseGamemode == BaseGamemode.None ? "" : baseGamemode.ToString().ToUpper());
+			DisplayName = displayName;
+			BaseGamemode = baseGamemode;
 
-			GamemodeString = GamemodePrefix + ID + (BaseGamemode == BaseGamemode.None ? "" : BaseGamemode.ToString().ToUpper());
+			GamemodeString = GamemodePrefix + ID.Replace(GamemodePrefix, "");
 		}
 
 		public Gamemode(string id, string displayName, Type gameManager)
