@@ -57,7 +57,7 @@ namespace Utilla
 
 			if (GamemodeManager.Instance.Gamemodes != null)
 			{
-                ShowPage(0);
+                ShowPage(_globalSelectionPage);
             }
 		}
 
