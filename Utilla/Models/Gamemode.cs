@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Utilla.Models
@@ -60,7 +61,7 @@ namespace Utilla.Models
 
         public Gamemode(string id, string displayName, BaseGamemode baseGamemode = BaseGamemode.None)
 		{
-			ID = id + (baseGamemode == BaseGamemode.None ? "" : baseGamemode.ToString().ToUpper());
+			ID = id + (baseGamemode == BaseGamemode.None || Enum.GetNames(typeof(BaseGamemode)).Any(m => id.Contains(m.ToUpper())) ? "" : baseGamemode.ToString().ToUpper());
 			DisplayName = displayName;
 			BaseGamemode = baseGamemode;
 

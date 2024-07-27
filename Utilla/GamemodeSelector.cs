@@ -23,7 +23,7 @@ namespace Utilla
 
 		ModeSelectButtonInfo[] baseSelectionInfo;
 
-        int page;
+        static int _globalSelectionPage;
 
 		public void Initialize(Transform parent, Transform anchor, Transform buttonLayout)
 		{
@@ -84,7 +84,7 @@ namespace Utilla
 
                 BaseGamemode baseMode = isInfection ? BaseGamemode.Infection : Enum.Parse<BaseGamemode>(textInfo.ToTitleCase(bm.ID.ToLower())); // i.e (referencing the titlecase), INFECTION = Infection, PAINTBRAWL (displayname) = Paintbrawl
 
-                moddedGamemodes.Add(new Gamemode("MODDED_", moddedTitle, baseMode));
+                moddedGamemodes.Add(new Gamemode($"MODDED_{bm.ID.ToUpper()}", moddedTitle, baseMode));
             }
         }
 
@@ -149,23 +149,23 @@ namespace Utilla
 
 		public void NextPage()
 		{
-			if (page < GamemodeManager.Instance.PageCount - 1)
+			if (_globalSelectionPage < GamemodeManager.Instance.PageCount - 1)
 			{
-				ShowPage(page + 1);
+				ShowPage(_globalSelectionPage + 1);
 			}
 		}
 
 		public void PreviousPage()
 		{
-			if (page > 0)
+			if (_globalSelectionPage > 0)
 			{
-				ShowPage(page - 1);
+				ShowPage(_globalSelectionPage - 1);
 			}
 		}
 
 		public void ShowPage(int page)
 		{
-			this.page = page;
+            _globalSelectionPage = page;
 
 			List<Gamemode> currentGamemodes = GamemodeManager.Instance.Gamemodes.Skip(page * PageSize).Take(PageSize).ToList();
 
