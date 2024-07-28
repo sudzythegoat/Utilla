@@ -146,9 +146,9 @@ namespace Utilla
 
             var highlightedIndex = Gamemodes.FindIndex(gm => gm.ID == currentGameMode);
 
-			UtillaLogging.Info($"Highlighted index is set at {highlightedIndex}.");
+			UtillaLogging.Info($"Highlighted index is set at {highlightedIndex}");
 
-            defaultSelector.ShowPage(highlightedIndex == -1 ? 0 : Mathf.CeilToInt(highlightedIndex / (float)GamemodeSelector.PageSize));
+            defaultSelector.ShowPage(highlightedIndex == -1 ? 0 : Mathf.FloorToInt(highlightedIndex / (float)GamemodeSelector.PageSize));
 
             SceneManager.sceneLoaded += OnSceneChange;
 		}
