@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Utilla.Models
+﻿namespace Utilla.Models
 {
     public struct GameModeSelectorPath
     {

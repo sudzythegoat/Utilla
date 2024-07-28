@@ -15,7 +15,7 @@ namespace Utilla
 {
 	public class GamemodeSelector : MonoBehaviour
 	{
-		const int PageSize = 4;
+		public const int PageSize = 4;
 
 		GameModeSelectorButtonLayout layout;
 
@@ -27,9 +27,16 @@ namespace Utilla
 
 		public void Initialize(Transform parent, Transform anchor, Transform buttonLayout)
 		{
+			if (!parent || !anchor || !buttonLayout)
+			{
+				UtillaLogging.Error("GamemodeSelector could not be initialized, all Transform parameters are required to ensure a smooth transition for custom gamemode usage.");
+				throw new NullReferenceException();
+			}
+
 			transform.parent = parent;
 
 			var selectorTitle = anchor.Find("GameModes Title Text");
+
 			if (selectorTitle)
 			{
                 selectorTitle.transform.localPosition += Vector3.right * -0.04f;
@@ -57,6 +64,7 @@ namespace Utilla
 
 			if (GamemodeManager.Instance.Gamemodes != null)
 			{
+				UtillaLogging.Log($"Current page of the GamemodeSelector is set to {_globalSelectionPage}.");
                 ShowPage(_globalSelectionPage);
             }
 		}
@@ -184,6 +192,7 @@ namespace Utilla
 				else
 				{
 					modeSelectButtons[i].enabled = false;
+
 					modeSelectButtons[i].SetInfo(nullGamemode);
 				}
 			}
