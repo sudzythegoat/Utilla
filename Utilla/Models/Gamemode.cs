@@ -31,7 +31,7 @@ namespace Utilla.Models
         /// <summary>
         /// Paintbrawl gamemode, requires at least two participating players.
         /// </summary>
-        Battle,
+        Paintbrawl,
 		/// <summary>
 		/// Ambush gamemode, inherited from the Infection gamemode where taggers are hidden from the survivors.
 		/// </summary>
@@ -93,9 +93,9 @@ namespace Utilla.Models
 			GamemodeString = ID;
 		}
 
-        public static implicit operator ModeSelectButtonInfo(Gamemode gamemode)
+        public static implicit operator ModeSelectButtonInfoData(Gamemode gamemode)
 		{
-			return new ModeSelectButtonInfo()
+			return new ModeSelectButtonInfoData()
 			{
 				Mode = gamemode.ID,
 				ModeTitle = gamemode.DisplayName,
@@ -104,7 +104,7 @@ namespace Utilla.Models
 			};
 		}
 
-		public static implicit operator Gamemode(ModeSelectButtonInfo modeSelectButtonInfo)
+		public static implicit operator Gamemode(ModeSelectButtonInfoData modeSelectButtonInfo)
 		{
 			return new Gamemode(modeSelectButtonInfo.Mode, modeSelectButtonInfo.ModeTitle);
 		}

@@ -13,6 +13,7 @@ using BepInEx;
 
 using Utilla.Models;
 using System.Threading.Tasks;
+using Utilla.Utils;
 
 namespace Utilla
 {
@@ -311,15 +312,7 @@ namespace Utilla
 			Type gmType = gamemode.GameManager;
 			if (gmType == null || !gmType.IsSubclassOf(typeof(GorillaGameManager)))
 			{
-				GameModeType? gmKey = gamemode.BaseGamemode switch
-				{
-					BaseGamemode.Casual => GameModeType.Casual,
-					BaseGamemode.Infection => GameModeType.Infection,
-					BaseGamemode.Hunt => GameModeType.Hunt,
-					BaseGamemode.Battle => GameModeType.Paintbrawl,
-					BaseGamemode.Ambush => GameModeType.Ambush,
-                    _ => null
-				};
+				GameModeType? gmKey = BaseGamemodeUtils.GetGameModeType(gamemode.BaseGamemode);
 
 				if (gmKey == null)
 				{

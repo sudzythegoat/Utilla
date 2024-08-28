@@ -10,6 +10,7 @@ using HarmonyLib;
 using System.Globalization;
 using TMPro;
 using UnityEngine.Events;
+using Utilla.Utils;
 
 namespace Utilla
 {
@@ -19,9 +20,11 @@ namespace Utilla
 
 		GameModeSelectorButtonLayout layout;
 
+		GameModeSelectorButtonLayoutData layoutData;
+
         ModeSelectButton[] modeSelectButtons = Array.Empty<ModeSelectButton>();
 
-		ModeSelectButtonInfo[] baseSelectionInfo;
+        ModeSelectButtonInfoData[] baseSelectionInfo;
 
         static int _globalSelectionPage;
 
@@ -35,16 +38,12 @@ namespace Utilla
 
 			transform.parent = parent;
 
-			var selectorTitle = anchor.Find("GameModes Title Text");
-
-			if (selectorTitle)
+			if (anchor.Find("GameModes Title Text") is Transform selectorTitle && selectorTitle)
 			{
                 selectorTitle.transform.localPosition += Vector3.right * -0.04f;
 			}
 
-			var buttons = Enumerable.Range(0, PageSize).Select(x => buttonLayout.GetChild(x));
-
-			modeSelectButtons = buttons.Select(x => x.GetComponent<ModeSelectButton>()).ToArray();
+			modeSelectButtons = Enumerable.Range(0, PageSize).Select(x => buttonLayout.GetChild(x)).Select(x => x.GetComponent<ModeSelectButton>()).ToArray();
 
             foreach (var mb in modeSelectButtons)
 			{
@@ -58,9 +57,11 @@ namespace Utilla
 
 			layout = buttonLayout.GetComponent<GameModeSelectorButtonLayout>();
 
-            baseSelectionInfo = (ModeSelectButtonInfo[])AccessTools.Field(layout.GetType(), "info").GetValue(layout);
+            layoutData = (GameModeSelectorButtonLayoutData)AccessTools.Field(layout.GetType(), "data").GetValue(layout);
 
-            CreatePageButtons(buttons.First().gameObject);
+			baseSelectionInfo = layoutData.Info;
+
+            CreatePageButtons(modeSelectButtons.First().gameObject);
 
 			if (GamemodeManager.Instance.Gamemodes != null)
 			{
@@ -78,7 +79,7 @@ namespace Utilla
 
             for (int i = 0; i < modeSelectButtons.Length; i++)
 			{
-				ModeSelectButtonInfo info = baseSelectionInfo[i];
+                ModeSelectButtonInfoData info = baseSelectionInfo[i];
                 baseGamemodes.Add(info);
             }
 
@@ -88,11 +89,11 @@ namespace Utilla
 			{
 				bool isInfection = bm.DisplayName.ToUpper() == "INFECTION";
 
-                string moddedTitle = isInfection ? "MODDED" : $"MODDED {bm.ID.ToUpper()}"; // i.e, INFECTION = MODDED, PAINTBRAWL (displayname) = MODDED BATTLE (id)
+                BaseGamemode baseMode = isInfection ? BaseGamemode.Infection : Enum.Parse<BaseGamemode>(textInfo.ToTitleCase(bm.ID.ToLower()));
 
-                BaseGamemode baseMode = isInfection ? BaseGamemode.Infection : Enum.Parse<BaseGamemode>(textInfo.ToTitleCase(bm.ID.ToLower())); // i.e (referencing the titlecase), INFECTION = Infection, PAINTBRAWL (displayname) = Paintbrawl
+                string moddedTitle = isInfection ? "MODDED" : $"MODDED {BaseGamemodeUtils.GetShortName(baseMode).ToUpper()}"; // i.e, INFECTION = MODDED, PAINTBRAWL (displayname) = MODDED BATTLE (id)
 
-                moddedGamemodes.Add(new Gamemode($"MODDED_{bm.ID.ToUpper()}", moddedTitle, baseMode));
+                moddedGamemodes.Add(new Gamemode($"MODDED_{BaseGamemodeUtils.GetName(baseMode).ToUpper()}", moddedTitle, baseMode));
             }
         }
 
@@ -129,7 +130,7 @@ namespace Utilla
 				var unityEvent = new UnityEvent();
 				unityEvent.AddListener(new UnityAction(onPressed));
 
-				GameObject.Destroy(button.GetComponent<ModeSelectButton>());
+				Destroy(button.GetComponent<ModeSelectButton>());
 				button.AddComponent<GorillaPressableButton>().onPressButton = unityEvent;
 
 				if (!button.GetComponentInParent<Canvas>())
@@ -142,10 +143,10 @@ namespace Utilla
 			}
 
 			GameObject nextPageButton = CreatePageButton("-->", NextPage);
-			nextPageButton.transform.localPosition = new Vector3(-0.775f, nextPageButton.transform.position.y + 0.005f, nextPageButton.transform.position.z);
+			nextPageButton.transform.localPosition = new Vector3(-0.745f, nextPageButton.transform.position.y + 0.005f, nextPageButton.transform.position.z - 0.03f);
 
 			GameObject previousPageButton = CreatePageButton("<--", PreviousPage);
-			previousPageButton.transform.localPosition = new Vector3(-0.775f, -0.633f, previousPageButton.transform.position.z);
+			previousPageButton.transform.localPosition = new Vector3(-0.745f, -0.633f, previousPageButton.transform.position.z - 0.03f);
 
 			Destroy(cube);
 
