@@ -35,8 +35,9 @@ namespace Utilla.Models
 		/// <summary>
 		/// Ambush gamemode, inherited from the Infection gamemode where taggers are hidden from the survivors.
 		/// </summary>
-		Ambush
-	}
+		Ambush,
+        Ghost
+    }
 
 	public class Gamemode {
 		public const string GamemodePrefix = "MODDED_";

@@ -64,7 +64,7 @@ namespace Utilla.Utils
 
 			GorillaComputer.instance.currentGameMode.Value = targetGameMode != null ? targetGameMode.ID : currentGameMode;
 
-            await __instance.AttemptToJoinSpecificRoomAsync(code, joinType);
+            await __instance.AttemptToJoinSpecificRoomAsync(code, joinType, null);
 
 			GorillaComputer.instance.currentGameMode.Value = currentGameMode;
 
