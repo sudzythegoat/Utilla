@@ -58,6 +58,15 @@ namespace Utilla
                 }
 			},
 			{
+                "VirtualStump", // not a scene
+				new GameModeSelectorPath()
+				{
+					name = "VirtualStumpSelector",
+					transform = "Environment Objects/LocalObjects_Prefab/VirtualStump_CustomMapLobby/ModeSelector_Group/Selector Buttons",
+					anchorPath = "anchor"
+                }
+			},
+			{
 
 				"Cave",
 				new GameModeSelectorPath()
@@ -151,6 +160,7 @@ namespace Utilla
 
             defaultSelector.ShowPage(highlightedIndex == -1 ? 0 : Mathf.FloorToInt(highlightedIndex / (float)GamemodeSelector.PageSize));
 
+			InitializeSelector(gameModeButtonsDict["VirtualStump"]);
             SceneManager.sceneLoaded += OnSceneChange;
 		}
 
