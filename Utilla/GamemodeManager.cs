@@ -121,7 +121,7 @@ namespace Utilla
 			}
 		};
 
-		void Start()
+		public void Start()
 		{
 			Instance = this;
 			Events.RoomJoined += OnRoomJoin;
@@ -160,18 +160,33 @@ namespace Utilla
 
             defaultSelector.ShowPage(highlightedIndex == -1 ? 0 : Mathf.FloorToInt(highlightedIndex / (float)GamemodeSelector.PageSize));
 
-			InitializeSelector(gameModeButtonsDict["VirtualStump"]);
             SceneManager.sceneLoaded += OnSceneChange;
+			Events.ForceLoadSelector += async (string path) => await TryLoadSelectorAsync(path);
 		}
 
 		async void OnSceneChange(Scene scene, LoadSceneMode loadMode)
 		{
-			if (gameModeButtonsDict.TryGetValue(scene.name, out var buttonData))
+			bool result = await TryLoadSelectorAsync(scene.name);
+			if (result)
 			{
-				await Task.Delay(100);
-				InitializeSelector(buttonData);
+				UtillaLogging.Log($"Loaded selector for scene {scene.name}");
+			}
+			else
+			{
+				UtillaLogging.Warning($"Selector could not be found for scene {scene.name}! (was there none made for this scene? has the name of the scene been modified?)");
 			}
 		}
+
+        async Task<bool> TryLoadSelectorAsync(string path)
+		{
+            if (gameModeButtonsDict.TryGetValue(path, out var buttonData))
+            {
+                await Task.Delay(100);
+                InitializeSelector(buttonData);
+				return true;
+            }
+			return false;
+        }
 
         GamemodeSelector InitializeSelector(GameModeSelectorPath gmPathData)
 		{
