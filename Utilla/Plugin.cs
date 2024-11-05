@@ -31,6 +31,7 @@ namespace Utilla
             Logging.Info("Game initialized");
 
             GameObject gameModeManagerObject = new(typeof(GamemodeManager).FullName, typeof(GamemodeManager));
+            DontDestroyOnLoad(gameModeManagerObject);
             _networkController.gameModeManager = gameModeManagerObject.GetComponent<GamemodeManager>();
 		}
     }
