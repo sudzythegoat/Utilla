@@ -65,7 +65,7 @@ namespace Utilla
 
             lastRoom = args;
 
-			// RoomUtils.ResetQueue();
+			RoomUtils.ResetQueue();
         }
 
 		public override void OnLeftRoom()

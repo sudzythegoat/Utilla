@@ -17,7 +17,7 @@ namespace Utilla
             Logging.Logger = Logger;
 
             DontDestroyOnLoad(this);
-            // RoomUtils.RoomCode = RoomUtils.RandomString(6); // Generate a random room code in case we need it
+            RoomUtils.RoomCode = RoomUtils.RandomString(6); // Generate a random room code in case we need it
 
             _networkController = gameObject.AddComponent<UtillaNetworkController>();
 

@@ -12,7 +12,6 @@ namespace Utilla.Utils
 {
     public static class RoomUtils
 	{
-		/*
 		public static string RoomCode;
 
 		internal static string defaultQueue;
@@ -57,7 +56,7 @@ namespace Utilla.Utils
 
             Logging.Info($"Attempting to connect to private room '{code}' in game mode '{gameMode}'.");
 
-			Gamemode targetGameMode = gameMode == BaseGamemode.None ? GamemodeManager.Instance.Gamemodes.Take(Constants.PageSize).FirstOrDefault(gm => gm.ID == currentGameMode) : GamemodeManager.Instance.Gamemodes.Take(Constants.PageSize).FirstOrDefault(gm => gm.BaseGamemode == gameMode);
+			Gamemode targetGameMode = gameMode == BaseGamemode.None ? GamemodeManager.Instance.Gamemodes.Take(Constants.PageSize).FirstOrDefault(gm => gm.ID == currentGameMode) : GamemodeManager.Instance.Gamemodes.Take(Constants.PageSize).FirstOrDefault(gm => gm.BaseGamemode.ToString() == gameMode.ToString());
 
 			if (targetGameMode == null)
 			{
@@ -130,6 +129,5 @@ namespace Utilla.Utils
 				defaultQueue = null;
 			}
 		}
-		*/
 	}
 }
