@@ -1,8 +1,8 @@
 ﻿using BepInEx.Logging;
 
-namespace Utilla
+namespace Utilla.Tools
 {
-    public class UtillaLogging
+    internal class Logging
     {
         public static ManualLogSource Logger;
 

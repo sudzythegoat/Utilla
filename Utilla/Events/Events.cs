@@ -23,8 +23,6 @@ namespace Utilla
         /// </summary>
         public static event EventHandler GameInitialized;
 
-        public static event Action<string> ForceLoadSelector;
-
         public virtual void TriggerRoomJoin(RoomJoinedArgs e)
         {
 			RoomJoined?.SafeInvoke(this, e);
@@ -39,11 +37,6 @@ namespace Utilla
 		{
 			GameInitialized?.SafeInvoke(this, EventArgs.Empty);
 		}
-
-        public virtual void TriggerForceLoadSelector(string selector)
-        {
-            ForceLoadSelector?.Invoke(selector);
-        }
 
         public class RoomJoinedArgs : EventArgs
         {

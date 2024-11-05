@@ -3,15 +3,14 @@ using UnityEngine;
 
 namespace Utilla.HarmonyPatches
 {
-	[HarmonyPatch(typeof(GorillaScoreboardSpawner))]
-	[HarmonyPatch("OnJoinedRoom")] // Just a guess
+	[HarmonyPatch(typeof(GorillaScoreboardSpawner), "OnJoinedRoom")]
 	internal class ScoreboardPatch
 	{
-		private static void Prefix(GorillaScoreboardSpawner __instance)
+		public static void Prefix(ref GameObject ___notInRoomText)
 		{
-			if (__instance.notInRoomText == null)
+			if (!___notInRoomText)
 			{
-				__instance.notInRoomText = new GameObject();
+                ___notInRoomText = new GameObject();
 			}
 		}
 	}

@@ -1,14 +1,12 @@
 using HarmonyLib;
-using UnityEngine;
 using GorillaNetworking;
 
 namespace Utilla.HarmonyPatches
 {
-	[HarmonyPatch(typeof(PhotonNetworkController))]
-	[HarmonyPatch("OnJoinedRoom", MethodType.Normal)]
+	[HarmonyPatch(typeof(PhotonNetworkController), "OnJoinedRoom")]
 	internal class CustomJoinPatch
 	{
-		private static void Prefix(PhotonNetworkController __instance, out string[] __state)
+        public static void Prefix(PhotonNetworkController __instance, out string[] __state)
 		{
 			__state = GorillaComputer.instance.allowedMapsToJoin;
 
@@ -19,7 +17,7 @@ namespace Utilla.HarmonyPatches
 			GorillaComputer.instance.allowedMapsToJoin = newMaps;
 		}
 
-		private static void Postfix(string[] __state)
+		public static void Postfix(string[] __state)
 		{
 			GorillaComputer.instance.allowedMapsToJoin = __state;
 		}

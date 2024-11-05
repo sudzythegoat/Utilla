@@ -25,7 +25,7 @@ namespace Utilla
 
 		public ModdedGamemodeAttribute(string id, string displayName, BaseGamemode baseGamemode = BaseGamemode.Infection)
 		{
-			gamemode = new Gamemode(id, displayName, baseGamemode);
+			gamemode = new Gamemode(id, displayName, baseGamemode.ToString());
 		}
 
 		public ModdedGamemodeAttribute(string id, string displayName, Type gameManager)

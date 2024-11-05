@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using HarmonyLib;
-using BepInEx;
-using System.Reflection;
-using Photon.Pun;
-using UnityEngine;
-using System.Linq;
+﻿using Photon.Pun;
 using Utilla.Utils;
 using GorillaNetworking;
 using ExitGames.Client.Photon;
@@ -15,7 +7,6 @@ namespace Utilla
 {
     public class UtillaNetworkController : MonoBehaviourPunCallbacks
     {
-        public static Events events;
 
         Events.RoomJoinedArgs lastRoom;
 
@@ -70,18 +61,18 @@ namespace Utilla
                 isPrivate = isPrivate,
                 Gamemode = gamemode
             };
-            events.TriggerRoomJoin(args);
+            Events.Instance.TriggerRoomJoin(args);
 
             lastRoom = args;
 
-			RoomUtils.ResetQueue();
+			// RoomUtils.ResetQueue();
         }
 
 		public override void OnLeftRoom()
 		{
             if (lastRoom != null)
 			{
-				events.TriggerRoomLeft(lastRoom);
+                Events.Instance.TriggerRoomLeft(lastRoom);
 				lastRoom = null;
 			}
 
@@ -93,7 +84,7 @@ namespace Utilla
 			if (!propertiesThatChanged.TryGetValue("gameMode", out var gameModeObject)) return;
 			if (!(gameModeObject is string gameMode)) return;
 
-			if (lastRoom.Gamemode.Contains(Models.Gamemode.GamemodePrefix) && !gameMode.Contains(Models.Gamemode.GamemodePrefix))
+			if (lastRoom.Gamemode.Contains(Constants.GamemodePrefix) && !gameMode.Contains(Constants.GamemodePrefix))
 			{
 				gameModeManager.OnRoomLeft(null, lastRoom);
 			}

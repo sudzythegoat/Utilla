@@ -6,11 +6,13 @@ using System.Reflection;
 using GorillaNetworking;
 using BepInEx;
 using Utilla.Models;
+using Utilla.Tools;
 
 namespace Utilla.Utils
 {
-	public static class RoomUtils
+    public static class RoomUtils
 	{
+		/*
 		public static string RoomCode;
 
 		internal static string defaultQueue;
@@ -53,13 +55,13 @@ namespace Utilla.Utils
 
 			string currentGameMode = PlayerPrefs.GetString("currentGameMode", "INFECTION");
 
-            UtillaLogging.Info($"Attempting to connect to private room '{code}' in game mode '{gameMode}'.");
+            Logging.Info($"Attempting to connect to private room '{code}' in game mode '{gameMode}'.");
 
-			Gamemode targetGameMode = gameMode == BaseGamemode.None ? GamemodeManager.Instance.Gamemodes.Take(GamemodeSelector.PageSize).FirstOrDefault(gm => gm.ID == currentGameMode) : GamemodeManager.Instance.Gamemodes.Take(GamemodeSelector.PageSize).FirstOrDefault(gm => gm.BaseGamemode == gameMode);
+			Gamemode targetGameMode = gameMode == BaseGamemode.None ? GamemodeManager.Instance.Gamemodes.Take(Constants.PageSize).FirstOrDefault(gm => gm.ID == currentGameMode) : GamemodeManager.Instance.Gamemodes.Take(Constants.PageSize).FirstOrDefault(gm => gm.BaseGamemode == gameMode);
 
 			if (targetGameMode == null)
 			{
-				UtillaLogging.Warning($"Game Mode with BaseGamemode '{gameMode}' could not be found, the current game mode will be used instead.");
+				Logging.Warning($"Game Mode with BaseGamemode '{gameMode}' could not be found, the current game mode will be used instead.");
 			}
 
 			GorillaComputer.instance.currentGameMode.Value = targetGameMode != null ? targetGameMode.ID : currentGameMode;
@@ -103,7 +105,7 @@ namespace Utilla.Utils
 				string customRoomID = photonNetworkController.customRoomID;
 				if (!customRoomID.Contains("_MAP"))
 				{
-					UtillaLogging.Info("Joining.");
+					Logging.Info("Joining.");
 					JoinPrivateLobby(customRoomID + "_MAP", gameMode);
 					return;
 				}
@@ -128,5 +130,6 @@ namespace Utilla.Utils
 				defaultQueue = null;
 			}
 		}
+		*/
 	}
 }
