@@ -34,69 +34,69 @@ namespace Utilla.Models
         Paintbrawl
     }
 
-    public class Gamemode 
-	{
-		/// <summary>
-		/// The title of the Gamemode visible through the gamemode selector
-		/// </summary>
-		public string DisplayName { get; }
+    public class Gamemode
+    {
+        /// <summary>
+        /// The title of the Gamemode visible through the gamemode selector
+        /// </summary>
+        public string DisplayName { get; }
 
-		/// <summary>
-		/// The internal ID of the Gamemode
-		/// </summary>
-		public string ID { get; }
+        /// <summary>
+        /// The internal ID of the Gamemode
+        /// </summary>
+        public string ID { get; }
 
-		/// <summary>
-		/// The GamemodeString used in the CustomProperties of the Room
-		/// </summary>
-		public string GamemodeString { get; }
+        /// <summary>
+        /// The GamemodeString used in the CustomProperties of the Room
+        /// </summary>
+        public string GamemodeString { get; }
 
-		/// <summary>
-		/// The BaseGamemode being inherited
-		/// </summary>
-		public string BaseGamemode { get; }
-		public Type GameManager { get; }
+        /// <summary>
+        /// The BaseGamemode being inherited
+        /// </summary>
+        public string BaseGamemode { get; }
+        public Type GameManager { get; }
 
         public Gamemode(string id, string displayName, string baseGameMode)
-		{
+        {
             ID = id;
             DisplayName = displayName;
             BaseGamemode = baseGameMode;
-			GamemodeString = Constants.GamemodePrefix + BaseGamemode.ToUpper();
+            GamemodeString = Constants.GamemodePrefix + BaseGamemode.ToUpper();
         }
 
-		public Gamemode(string id, string displayName, Type gameManager)
-		{
-			ID = id;
-			DisplayName = displayName;
-			GameManager = gameManager;
-			GamemodeString = Constants.GamemodePrefix + ID;
-		}
+        public Gamemode(string id, string displayName, Type gameManager)
+        {
+            ID = id;
+            DisplayName = displayName;
+            GameManager = gameManager;
+            GamemodeString = Constants.GamemodePrefix + ID;
+        }
 
         /// <remarks>This should only be used interally to create base game gamemodes</remarks>
         internal Gamemode(string id, string displayName)
         {
             ID = id;
             DisplayName = displayName;
-			BaseGamemode = displayName.ToUpper();
+            BaseGamemode = displayName.ToUpper();
 
             GamemodeString = ID;
         }
 
         public static implicit operator ModeSelectButtonInfoData(Gamemode gamemode)
-		{
-			return new ModeSelectButtonInfoData()
-			{
-				Mode = gamemode.ID,
-				ModeTitle = gamemode.DisplayName,
-				NewMode = false,
-				CountdownTo = null
-			};
-		}
+        {
+            return new ModeSelectButtonInfoData()
+            {
+                Mode = gamemode.ID,
+                ModeTitle = gamemode.DisplayName,
+                NewMode = false,
+                CountdownTo = null
+            };
+        }
 
-		public static implicit operator Gamemode(ModeSelectButtonInfoData modeSelectButtonInfo)
-		{
-			return new Gamemode(modeSelectButtonInfo.Mode, modeSelectButtonInfo.ModeTitle, Enum.GetNames(typeof(GameModeType)).First(gamemode => gamemode.ToUpper() == modeSelectButtonInfo.Mode).ToString());
-		}
+        public static implicit operator Gamemode(ModeSelectButtonInfoData modeSelectButtonInfo)
+        {
+            return new Gamemode(modeSelectButtonInfo.Mode, modeSelectButtonInfo.ModeTitle, Enum.GetNames(typeof(GameModeType)).First(gamemode => gamemode.ToUpper() == modeSelectButtonInfo.Mode.Replace(" ", "")).ToString());
+        }
     }
 }
