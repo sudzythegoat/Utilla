@@ -1,9 +1,9 @@
-﻿using System;
-using BepInEx;
-using Utilla.HarmonyPatches;
-using Utilla.Utils;
+﻿using BepInEx;
+using System;
 using UnityEngine;
+using Utilla.HarmonyPatches;
 using Utilla.Tools;
+using Utilla.Utils;
 
 namespace Utilla
 {
@@ -27,12 +27,12 @@ namespace Utilla
         }
 
         public void PostInitialized(object sender, EventArgs e)
-		{
+        {
             Logging.Info("Game initialized");
 
             GameObject gameModeManagerObject = new(typeof(GamemodeManager).FullName, typeof(GamemodeManager));
             DontDestroyOnLoad(gameModeManagerObject);
             _networkController.gameModeManager = gameModeManagerObject.GetComponent<GamemodeManager>();
-		}
+        }
     }
 }

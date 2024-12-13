@@ -1,7 +1,7 @@
-﻿using Photon.Pun;
-using Utilla.Utils;
+﻿using ExitGames.Client.Photon;
 using GorillaNetworking;
-using ExitGames.Client.Photon;
+using Photon.Pun;
+using Utilla.Utils;
 
 namespace Utilla
 {
@@ -10,10 +10,10 @@ namespace Utilla
 
         Events.RoomJoinedArgs lastRoom;
 
-		public GamemodeManager gameModeManager;
-  
-		public override void OnJoinedRoom()
-		{
+        public GamemodeManager gameModeManager;
+
+        public override void OnJoinedRoom()
+        {
             // trigger events
             bool isPrivate = false;
             string gamemode = "";
@@ -22,14 +22,14 @@ namespace Utilla
                 var currentRoom = PhotonNetwork.NetworkingClient.CurrentRoom;
                 isPrivate = !currentRoom.IsVisible ||
                             currentRoom.CustomProperties.ContainsKey("Description"); // Room Browser rooms
-				if (currentRoom.CustomProperties.TryGetValue("gameMode", out var gamemodeObject))
-				{
+                if (currentRoom.CustomProperties.TryGetValue("gameMode", out var gamemodeObject))
+                {
                     gamemode = gamemodeObject as string;
-				}
+                }
             }
 
-			// custom gamemode-names (which are used by GorillaComputer and are included in GorillaGameManager on the gamemode selectors) can be set by custom managers, just using the "CUSTOM" prefix isn't too great either, it's not specific enough
-			/*
+            // custom gamemode-names (which are used by GorillaComputer and are included in GorillaGameManager on the gamemode selectors) can be set by custom managers, just using the "CUSTOM" prefix isn't too great either, it's not specific enough
+            /*
 			var prefix = "ERROR";
 			if (gamemode.Contains(Models.Gamemode.GamemodePrefix))
 			{
@@ -54,9 +54,9 @@ namespace Utilla
                 } 
             }
 			GorillaComputer.instance.currentGameModeText.Value = "CURRENT MODE\n" + prefix;
-			*/ 
+			*/
 
-			Events.RoomJoinedArgs args = new Events.RoomJoinedArgs
+            Events.RoomJoinedArgs args = new Events.RoomJoinedArgs
             {
                 isPrivate = isPrivate,
                 Gamemode = gamemode
@@ -65,32 +65,32 @@ namespace Utilla
 
             lastRoom = args;
 
-			RoomUtils.ResetQueue();
+            RoomUtils.ResetQueue();
         }
 
-		public override void OnLeftRoom()
-		{
+        public override void OnLeftRoom()
+        {
             if (lastRoom != null)
-			{
+            {
                 Events.Instance.TriggerRoomLeft(lastRoom);
-				lastRoom = null;
-			}
+                lastRoom = null;
+            }
 
-			GorillaComputer.instance.currentGameModeText.Value = "CURRENT MODE\n-NOT IN ROOM-";
-		}
+            GorillaComputer.instance.currentGameModeText.Value = "CURRENT MODE\n-NOT IN ROOM-";
+        }
 
         public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
         {
-			if (!propertiesThatChanged.TryGetValue("gameMode", out var gameModeObject)) return;
-			if (!(gameModeObject is string gameMode)) return;
+            if (!propertiesThatChanged.TryGetValue("gameMode", out var gameModeObject)) return;
+            if (!(gameModeObject is string gameMode)) return;
 
-			if (lastRoom.Gamemode.Contains(Constants.GamemodePrefix) && !gameMode.Contains(Constants.GamemodePrefix))
-			{
-				gameModeManager.OnRoomLeft(null, lastRoom);
-			}
-				
-			lastRoom.Gamemode = gameMode;
-			lastRoom.isPrivate = PhotonNetwork.CurrentRoom.IsVisible;
+            if (lastRoom.Gamemode.Contains(Constants.GamemodePrefix) && !gameMode.Contains(Constants.GamemodePrefix))
+            {
+                gameModeManager.OnRoomLeft(null, lastRoom);
+            }
+
+            lastRoom.Gamemode = gameMode;
+            lastRoom.isPrivate = PhotonNetwork.CurrentRoom.IsVisible;
         }
     }
 }

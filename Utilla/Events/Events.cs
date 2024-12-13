@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Utilla
 {
-	public class Events
+    public class Events
     {
         public static Events Instance = new();
 
@@ -25,18 +23,18 @@ namespace Utilla
 
         public virtual void TriggerRoomJoin(RoomJoinedArgs e)
         {
-			RoomJoined?.SafeInvoke(this, e);
+            RoomJoined?.SafeInvoke(this, e);
         }
 
         public virtual void TriggerRoomLeft(RoomJoinedArgs e)
-		{
-			RoomLeft?.SafeInvoke(this, e);
-		}
+        {
+            RoomLeft?.SafeInvoke(this, e);
+        }
 
         public virtual void TriggerGameInitialized()
-		{
-			GameInitialized?.SafeInvoke(this, EventArgs.Empty);
-		}
+        {
+            GameInitialized?.SafeInvoke(this, EventArgs.Empty);
+        }
 
         public class RoomJoinedArgs : EventArgs
         {
@@ -50,5 +48,5 @@ namespace Utilla
             /// </summary>
             public string Gamemode { get; set; }
         }
-	}
+    }
 }

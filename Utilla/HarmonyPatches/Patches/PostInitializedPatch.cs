@@ -2,9 +2,9 @@
 
 namespace Utilla.HarmonyPatches
 {
-	[HarmonyPatch(typeof(GorillaTagger), "Start")]
+    [HarmonyPatch(typeof(GorillaTagger), "Start")]
     internal static class PostInitializedPatch
-	{
-		public static void Postfix() => Events.Instance.TriggerGameInitialized();
+    {
+        public static void Postfix() => Events.Instance.TriggerGameInitialized();
     }
 }
