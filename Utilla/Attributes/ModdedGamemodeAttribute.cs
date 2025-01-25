@@ -1,7 +1,7 @@
 ﻿using System;
 using Utilla.Models;
 
-namespace Utilla
+namespace Utilla.Attributes
 {
     /// <summary>
     /// Tells Utilla that a plugin wants to use attributes for room join callbacks.

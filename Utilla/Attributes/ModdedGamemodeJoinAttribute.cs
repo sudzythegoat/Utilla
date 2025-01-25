@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Utilla
+namespace Utilla.Attributes
 {
     /// <summary>
     /// This attribute marks a method to be called when a modded lobby is joined.

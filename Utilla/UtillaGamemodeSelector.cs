@@ -1,6 +1,5 @@
 ﻿using GorillaGameModes;
 using GorillaNetworking;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +17,9 @@ namespace Utilla
         // Layout
 
         public GameModeSelectorButtonLayout Layout => GetComponent<GameModeSelectorButtonLayout>();
-        private GameModeSelectorButtonLayoutData LayoutData => (GameModeSelectorButtonLayoutData)AccessTools.Field(typeof(GameModeSelectorButtonLayout), "data").GetValue(Layout);
-        private ModeSelectButtonInfoData[] LayoutButtonInfo => LayoutData.Info;
+        private GTZone Zone => Layout.zone;
 
+        private HashSet<GameModeType> modesForZone;
         private ModeSelectButton[] modeSelectButtons = [];
         private static GameObject fallbackTemplateButton = null;
 
@@ -31,12 +30,12 @@ namespace Utilla
 
         public void Awake()
         {
+            modesForZone = GameMode.GameModeZoneMapping.GetModesForZone(Zone, NetworkSystem.Instance.SessionIsPrivate);
             modeSelectButtons = GetComponentsInChildren<ModeSelectButton>(true).Take(Constants.PageSize).ToArray();
 
             foreach (var mb in modeSelectButtons)
             {
-                TMP_Text gamemodeTitle = (TMP_Text)AccessTools.Field(mb.GetType(), "gameModeTitle").GetValue(mb);
-
+                TMP_Text gamemodeTitle = mb.gameModeTitle;
                 gamemodeTitle.enableAutoSizing = true;
                 gamemodeTitle.fontSizeMax = gamemodeTitle.fontSize;
                 gamemodeTitle.fontSizeMin = 0f;
@@ -57,19 +56,16 @@ namespace Utilla
             baseGamemodes = [];
             moddedGamemodes = [];
 
-            if (modeSelectButtons == null || modeSelectButtons.Length == 0 || !Layout) return;
-
-            for (int i = 0; i < modeSelectButtons.Length; i++)
+            foreach (GameModeType item in modesForZone)
             {
-                ModeSelectButtonInfoData info = LayoutButtonInfo[i];
-                baseGamemodes.Add(info);
+                baseGamemodes.Add(new Gamemode(item.ToString(), GameMode.GameModeZoneMapping.GetModeName(item), item.ToString()));
             }
 
             foreach (Gamemode bm in baseGamemodes)
             {
                 string baseMode = bm.BaseGamemode;
-                string moddedTitle = Enum.Parse<GameModeType>(baseMode) == GameModeType.Infection ? "MODDED" : $"MODDED {baseMode.ToUpper()}";
-                moddedGamemodes.Add(new Gamemode($"MODDED_{baseMode.ToUpper()}", moddedTitle, baseMode));
+                string moddedTitle = (Enum.TryParse<GameModeType>(baseMode, out var result) && result == GameModeType.Infection) ? "MODDED" : $"MODDED {baseMode.ToUpper()}";
+                moddedGamemodes.Add(new Gamemode($"MODDED_{baseMode}", moddedTitle, baseMode));
             }
         }
 
@@ -156,16 +152,13 @@ namespace Utilla
                 if (i < currentGamemodes.Count)
                 {
                     Gamemode customMode = currentGamemodes[i];
-
                     modeSelectButtons[i].enabled = true;
-
-                    modeSelectButtons[i].SetInfo(LayoutButtonInfo.FirstOrDefault(i => i.Mode == customMode.ID) ?? customMode);
+                    modeSelectButtons[i].SetInfo(customMode.ID, customMode.DisplayName, false, null);
                 }
                 else
                 {
                     modeSelectButtons[i].enabled = false;
-
-                    modeSelectButtons[i].SetInfo(new Gamemode("", ""));
+                    modeSelectButtons[i].SetInfo("", "", false, null);
                 }
             }
 

@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace Utilla.HarmonyPatches
+namespace Utilla.HarmonyPatches.Patches
 {
     [HarmonyPatch(typeof(GorillaTagger), "Start")]
     internal static class PostInitializedPatch

@@ -82,7 +82,7 @@ namespace Utilla
         public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
         {
             if (!propertiesThatChanged.TryGetValue("gameMode", out var gameModeObject)) return;
-            if (!(gameModeObject is string gameMode)) return;
+            if (gameModeObject is not string gameMode) return;
 
             if (lastRoom.Gamemode.Contains(Constants.GamemodePrefix) && !gameMode.Contains(Constants.GamemodePrefix))
             {

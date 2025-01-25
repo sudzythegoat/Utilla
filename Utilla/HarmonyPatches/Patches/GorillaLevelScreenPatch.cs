@@ -1,7 +1,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace Utilla.HarmonyPatches
+namespace Utilla.HarmonyPatches.Patches
 {
     [HarmonyPatch(typeof(GorillaLevelScreen), "UpdateText")]
     internal class GorillaLevelScreenPatch

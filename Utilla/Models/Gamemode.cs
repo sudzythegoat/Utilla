@@ -62,7 +62,7 @@ namespace Utilla.Models
             ID = id;
             DisplayName = displayName;
             BaseGamemode = baseGameMode;
-            GamemodeString = Constants.GamemodePrefix + BaseGamemode.ToUpper();
+            GamemodeString = Constants.GamemodePrefix + BaseGamemode;
         }
 
         public Gamemode(string id, string displayName, Type gameManager)
@@ -71,32 +71,6 @@ namespace Utilla.Models
             DisplayName = displayName;
             GameManager = gameManager;
             GamemodeString = Constants.GamemodePrefix + ID;
-        }
-
-        /// <remarks>This should only be used interally to create base game gamemodes</remarks>
-        internal Gamemode(string id, string displayName)
-        {
-            ID = id;
-            DisplayName = displayName;
-            BaseGamemode = displayName.ToUpper();
-
-            GamemodeString = ID;
-        }
-
-        public static implicit operator ModeSelectButtonInfoData(Gamemode gamemode)
-        {
-            return new ModeSelectButtonInfoData()
-            {
-                Mode = gamemode.ID,
-                ModeTitle = gamemode.DisplayName,
-                NewMode = false,
-                CountdownTo = null
-            };
-        }
-
-        public static implicit operator Gamemode(ModeSelectButtonInfoData modeSelectButtonInfo)
-        {
-            return new Gamemode(modeSelectButtonInfo.Mode, modeSelectButtonInfo.ModeTitle, Enum.GetNames(typeof(GameModeType)).First(gamemode => gamemode.ToUpper() == modeSelectButtonInfo.Mode.Replace(" ", "")).ToString());
         }
     }
 }

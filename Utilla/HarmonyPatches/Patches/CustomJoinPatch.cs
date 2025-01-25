@@ -1,7 +1,7 @@
 using GorillaNetworking;
 using HarmonyLib;
 
-namespace Utilla.HarmonyPatches
+namespace Utilla.HarmonyPatches.Patches
 {
     [HarmonyPatch(typeof(PhotonNetworkController), "OnJoinedRoom")]
     internal class CustomJoinPatch

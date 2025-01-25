@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using UnityEngine;
+using Utilla.Attributes;
 using Utilla.Models;
 using Utilla.Tools;
 
@@ -22,6 +23,7 @@ namespace Utilla
 
         private List<PluginInfo> pluginInfos;
 
+        /*
         FieldInfo fiGameModeInstance = typeof(GameMode).GetField("instance", BindingFlags.Static | BindingFlags.NonPublic);
         GameMode gtGameModeInstance;
 
@@ -33,6 +35,7 @@ namespace Utilla
 
         FieldInfo fiGameModes = typeof(GameMode).GetField("gameModes", BindingFlags.Static | BindingFlags.NonPublic);
         List<GorillaGameManager> gtGameModes;
+        */
 
         List<string> gtGameModeNames;
 
@@ -53,14 +56,10 @@ namespace Utilla
 
         public void Start()
         {
-            gtGameModeInstance = fiGameModeInstance.GetValue(null) as GameMode;
-            gtGameModeTable = fiGameModeTable.GetValue(null) as Dictionary<int, GorillaGameManager>;
-            gtGameModeKeyByName = fiGameModeKeyByName.GetValue(null) as Dictionary<string, int>;
-            gtGameModes = fiGameModes.GetValue(null) as List<GorillaGameManager>;
             gtGameModeNames = GameMode.gameModeNames;
 
             moddedGameModesObject = new GameObject("Modded Game Modes");
-            moddedGameModesObject.transform.SetParent(gtGameModeInstance.gameObject.transform);
+            moddedGameModesObject.transform.SetParent(GameMode.instance.gameObject.transform);
 
             var currentGameMode = PlayerPrefs.GetString("currentGameMode", "INFECTION");
             GorillaComputer.instance.currentGameMode.Value = currentGameMode;
@@ -77,7 +76,7 @@ namespace Utilla
 
             Gamemodes.AddRange(GetGamemodes(pluginInfos));
 
-            Gamemodes.ForEach(gamemode => AddGamemodeToPrefabPool(gamemode));
+            Gamemodes.ForEach(AddGamemodeToPrefabPool);
 
             Logging.Info($"Current Game Mode is set at {currentGameMode}.");
 
@@ -90,10 +89,9 @@ namespace Utilla
 
         List<Gamemode> GetGamemodes(List<PluginInfo> infos)
         {
-            List<Gamemode> gamemodes = new List<Gamemode>();
-            gamemodes.AddRange(DefaultModdedGamemodes);
+            List<Gamemode> gamemodes = [.. DefaultModdedGamemodes];
 
-            HashSet<Gamemode> additonalGamemodes = new HashSet<Gamemode>();
+            HashSet<Gamemode> additonalGamemodes = [];
             foreach (var info in infos)
             {
                 additonalGamemodes.UnionWith(info.Gamemodes);
@@ -111,7 +109,7 @@ namespace Utilla
 
         List<PluginInfo> GetPluginInfos()
         {
-            List<PluginInfo> infos = new List<PluginInfo>();
+            List<PluginInfo> infos = [];
             foreach (var info in BepInEx.Bootstrap.Chainloader.PluginInfos)
             {
                 if (info.Value == null) continue;
@@ -193,7 +191,7 @@ namespace Utilla
         void AddGamemodeToPrefabPool(Gamemode gamemode)
         {
             if (gamemode.GameManager is null) return;
-            if (gtGameModeKeyByName.ContainsKey(gamemode.GamemodeString) || gtGameModeKeyByName.ContainsKey(gamemode.DisplayName))
+            if (GameMode.gameModeKeyByName.ContainsKey(gamemode.GamemodeString) || GameMode.gameModeKeyByName.ContainsKey(gamemode.DisplayName))
             {
                 Logging.Error($"Game Mode with name '{gamemode.GamemodeString}' or '{gamemode.DisplayName}' already exists.");
                 return;
@@ -209,8 +207,8 @@ namespace Utilla
                     return;
                 }
 
-                gtGameModeKeyByName[gamemode.GamemodeString] = (int)gmKey;
-                gtGameModeKeyByName[gamemode.DisplayName] = (int)gmKey;
+                GameMode.gameModeKeyByName[gamemode.GamemodeString] = (int)gmKey;
+                GameMode.gameModeKeyByName[gamemode.DisplayName] = (int)gmKey;
                 gtGameModeNames.Add(gamemode.DisplayName);
                 return;
             }
@@ -220,18 +218,18 @@ namespace Utilla
             var gameMode = prefab.AddComponent(gamemode.GameManager) as GorillaGameManager;
             int gameModeKey = (int)gameMode.GameType();
 
-            if (gtGameModeTable.ContainsKey(gameModeKey))
+            if (GameMode.gameModeTable.ContainsKey(gameModeKey))
             {
-                Logging.Error($"Game Mode with name '{gtGameModeTable[gameModeKey].GameModeName()}' is already using GameType '{gameModeKey}'.");
+                Logging.Error($"Game Mode with name '{GameMode.gameModeTable[gameModeKey].GameModeName()}' is already using GameType '{gameModeKey}'.");
                 GameObject.Destroy(prefab);
                 return;
             }
 
-            gtGameModeTable[gameModeKey] = gameMode;
-            gtGameModeKeyByName[gamemode.GamemodeString] = gameModeKey;
-            gtGameModeKeyByName[gamemode.DisplayName] = gameModeKey;
+            GameMode.gameModeTable[gameModeKey] = gameMode;
+            GameMode.gameModeKeyByName[gamemode.GamemodeString] = gameModeKey;
+            GameMode.gameModeKeyByName[gamemode.DisplayName] = gameModeKey;
             gtGameModeNames.Add(gamemode.DisplayName);
-            gtGameModes.Add(gameMode);
+            GameMode.gameModes.Add(gameMode);
 
             prefab.transform.SetParent(moddedGameModesObject.transform);
             prefab.SetActive(true);
