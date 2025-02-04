@@ -191,9 +191,9 @@ namespace Utilla
         void AddGamemodeToPrefabPool(Gamemode gamemode)
         {
             if (gamemode.GameManager is null) return;
-            if (GameMode.gameModeKeyByName.ContainsKey(gamemode.GamemodeString) || GameMode.gameModeKeyByName.ContainsKey(gamemode.DisplayName))
+            if (GameMode.gameModeKeyByName.ContainsKey(gamemode.GamemodeString) || GameMode.gameModeKeyByName.ContainsKey(gamemode.ID))
             {
-                Logging.Error($"Game Mode with name '{gamemode.GamemodeString}' or '{gamemode.DisplayName}' already exists.");
+                Logging.Error($"Game Mode with name '{gamemode.GamemodeString}' or '{gamemode.ID}' already exists.");
                 return;
             }
 
@@ -207,9 +207,9 @@ namespace Utilla
                     return;
                 }
 
-                GameMode.gameModeKeyByName[gamemode.GamemodeString] = (int)gmKey;
-                GameMode.gameModeKeyByName[gamemode.DisplayName] = (int)gmKey;
-                gtGameModeNames.Add(gamemode.DisplayName);
+                GameMode.gameModeKeyByName[gamemode.ID] = (int)gmKey;
+                //GameMode.gameModeKeyByName[gamemode.DisplayName] = (int)gmKey;
+                gtGameModeNames.Add(gamemode.ID);
                 return;
             }
 
@@ -226,9 +226,9 @@ namespace Utilla
             }
 
             GameMode.gameModeTable[gameModeKey] = gameMode;
-            GameMode.gameModeKeyByName[gamemode.GamemodeString] = gameModeKey;
-            GameMode.gameModeKeyByName[gamemode.DisplayName] = gameModeKey;
-            gtGameModeNames.Add(gamemode.DisplayName);
+            GameMode.gameModeKeyByName[gamemode.ID] = gameModeKey;
+            //GameMode.gameModeKeyByName[gamemode.DisplayName] = gameModeKey;
+            gtGameModeNames.Add(gamemode.ID);
             GameMode.gameModes.Add(gameMode);
 
             prefab.transform.SetParent(moddedGameModesObject.transform);
