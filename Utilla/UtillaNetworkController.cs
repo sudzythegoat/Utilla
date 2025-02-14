@@ -20,8 +20,7 @@ namespace Utilla
             if (PhotonNetwork.CurrentRoom != null)
             {
                 var currentRoom = PhotonNetwork.NetworkingClient.CurrentRoom;
-                isPrivate = !currentRoom.IsVisible ||
-                            currentRoom.CustomProperties.ContainsKey("Description"); // Room Browser rooms
+                isPrivate = !currentRoom.IsVisible; // Room Browser rooms
                 if (currentRoom.CustomProperties.TryGetValue("gameMode", out var gamemodeObject))
                 {
                     gamemode = gamemodeObject as string;
