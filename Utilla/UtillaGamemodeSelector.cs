@@ -17,7 +17,7 @@ namespace Utilla
         // Layout
 
         public GameModeSelectorButtonLayout Layout => GetComponent<GameModeSelectorButtonLayout>();
-        private GTZone Zone => Layout.zone;
+        public GTZone Zone => Layout.zone;
 
         private HashSet<GameModeType> modesForZone;
         private ModeSelectButton[] modeSelectButtons = [];
@@ -32,7 +32,7 @@ namespace Utilla
         {
             modesForZone = GameMode.GameModeZoneMapping.GetModesForZone(Zone, NetworkSystem.Instance.SessionIsPrivate);
             modeSelectButtons = GetComponentsInChildren<ModeSelectButton>(true).Take(Constants.PageSize).ToArray();
-
+            
             foreach (var mb in modeSelectButtons)
             {
                 TMP_Text gamemodeTitle = mb.gameModeTitle;
@@ -145,7 +145,13 @@ namespace Utilla
         {
             currentPage = page;
 
-            List<Gamemode> currentGamemodes = GamemodeManager.Instance.Gamemodes.Skip(page * Constants.PageSize).Take(Constants.PageSize).ToList();
+            GetSelectorGamemodes(out var gm, out var moddedGamemodes);
+
+            var gamemodes = gm;
+            gamemodes.AddRange(moddedGamemodes);
+            gamemodes.AddRange(GamemodeManager.Instance.GetExtraGameModes());
+
+            List<Gamemode> currentGamemodes = gamemodes.Skip(page * Constants.PageSize).Take(Constants.PageSize).ToList();
 
             for (int i = 0; i < modeSelectButtons.Length; i++)
             {
