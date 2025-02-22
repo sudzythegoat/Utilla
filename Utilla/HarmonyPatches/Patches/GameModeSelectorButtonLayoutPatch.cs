@@ -5,9 +5,17 @@ namespace Utilla.HarmonyPatches.Patches;
 [HarmonyPatch(typeof(GameModeSelectorButtonLayout))]
 public class GameModeSelectorButtonLayoutPatch
 {
-    [HarmonyPatch("SetupButtons"), HarmonyPrefix]//uh fuck this thing we dont need it
-    public static bool SetupButtonsPatch()
+
+    [HarmonyPatch("OnEnable"), HarmonyPrefix]
+    public static bool OnEnablePatch(GameModeSelectorButtonLayout __instance)
     {
+        __instance.SetupButtons();
         return false;
+    }
+    
+    [HarmonyPatch("SetupButtons"), HarmonyPrefix]
+    public static void SetupButtons(GameModeSelectorButtonLayout __instance)
+    {
+        NetworkSystem.Instance.OnJoinedRoomEvent -= __instance.SetupButtons;
     }
 }

@@ -14,17 +14,20 @@ namespace Utilla
         private UtillaNetworkController _networkController;
         public static Plugin Instance;
 
-        public void Start()
+        Plugin()
         {
             Instance = this;
+            UtillaPatches.ApplyHarmonyPatches();
+        }
+
+        public void Start()
+        {
             Logging.Logger = Logger;
 
             DontDestroyOnLoad(this);
             RoomUtils.RoomCode = RoomUtils.RandomString(6); // Generate a random room code in case we need it
 
             _networkController = gameObject.AddComponent<UtillaNetworkController>();
-           
-            UtillaPatches.ApplyHarmonyPatches();
         }
 
         public void PostInitialized()
