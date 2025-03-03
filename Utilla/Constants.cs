@@ -6,7 +6,7 @@
 
         public const string Name = "Utilla";
 
-        public const string Version = "1.6.15";
+        public const string Version = "1.6.16";
 
         public const int PageSize = 4;
 

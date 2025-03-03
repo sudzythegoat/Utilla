@@ -63,8 +63,8 @@ namespace Utilla
 
             var currentGameMode = PlayerPrefs.GetString("currentGameMode", "INFECTION");
             GorillaComputer.instance.currentGameMode.Value = currentGameMode;
-
-            var defaultSelector = FindObjectOfType<UtillaGamemodeSelector>();
+            
+            var defaultSelector = FindObjectsOfType<UtillaGamemodeSelector>().First(x => x.Zone == GTZone.forest);
 
             defaultSelector.GetSelectorGamemodes(out var gamemodes, out DefaultModdedGamemodes);
 
@@ -87,7 +87,18 @@ namespace Utilla
             defaultSelector.ShowPage(highlightedIndex == -1 ? 0 : Mathf.FloorToInt(highlightedIndex / (float)Constants.PageSize));
         }
 
-        List<Gamemode> GetGamemodes(List<PluginInfo> infos)
+        public List<Gamemode> GetExtraGameModes()
+        {
+            List<Gamemode> extraGameModes = new List<Gamemode>();
+
+            foreach (var info in GetPluginInfos())
+            {
+                extraGameModes.AddRange(info.Gamemodes);
+            }
+            return extraGameModes;
+        }
+
+        public List<Gamemode> GetGamemodes(List<PluginInfo> infos)
         {
             List<Gamemode> gamemodes = [.. DefaultModdedGamemodes];
 
