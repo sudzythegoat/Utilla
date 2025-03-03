@@ -15,7 +15,7 @@ namespace Utilla.HarmonyPatches.Patches
 
             if (!Enum.IsDefined(typeof(GameModeType), gameMode))
             {
-                Logging.Info($"Join trigger returning nom-defined desired game mode {gameMode}");
+                Logging.Info($"Join trigger returning non-defined desired game mode {gameMode}");
 
                 __result = gameMode;
                 return false;
