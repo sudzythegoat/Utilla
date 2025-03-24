@@ -26,6 +26,7 @@ namespace Utilla.Utils
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        /*
         /// <summary>
         /// Joins a private room from a sepcifc room code.
         /// </summary>
@@ -129,5 +130,6 @@ namespace Utilla.Utils
                 defaultQueue = null;
             }
         }
+        */
     }
 }

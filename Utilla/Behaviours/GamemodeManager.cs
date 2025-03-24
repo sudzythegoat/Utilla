@@ -11,13 +11,11 @@ using Utilla.Attributes;
 using Utilla.Models;
 using Utilla.Tools;
 
-namespace Utilla
+namespace Utilla.Behaviours
 {
-    public class GamemodeManager : MonoBehaviour
+    public class GamemodeManager : Singleton<GamemodeManager>
     {
-        public static bool HasInstance => Instance;
-        public static GamemodeManager Instance { get; private set; }
-
+        public Dictionary<GameModeType, Gamemode> ModdedGamemodesPerMode;
         public List<Gamemode> DefaultModdedGamemodes;
         public List<Gamemode> Gamemodes { get; private set; }
 
@@ -41,15 +39,10 @@ namespace Utilla
 
         GameObject moddedGameModesObject;
 
-        public void Awake()
+        public override void Initialize()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-            }
-
-            Instance = this;
-
+            base.Initialize();
+            
             Events.RoomJoined += OnRoomJoin;
             Events.RoomLeft += OnRoomLeft;
         }
@@ -61,36 +54,37 @@ namespace Utilla
             moddedGameModesObject = new GameObject("Modded Game Modes");
             moddedGameModesObject.transform.SetParent(GameMode.instance.gameObject.transform);
 
-            var currentGameMode = PlayerPrefs.GetString("currentGameMode", "INFECTION");
+            var currentGameMode = PlayerPrefs.GetString("currentGameMode", GameModeType.Infection.ToString());
             GorillaComputer.instance.currentGameMode.Value = currentGameMode;
-            
-            var defaultSelector = FindObjectsOfType<UtillaGamemodeSelector>().First(x => x.Zone == GTZone.forest);
 
-            defaultSelector.GetSelectorGamemodes(out var gamemodes, out DefaultModdedGamemodes);
+            var zone_names = Enum.GetNames(typeof(GTZone));
+            HashSet<GameModeType> all_game_modes = [];
+            zone_names
+                .Select(zone_name => (GTZone)Enum.Parse(typeof(GTZone), zone_name))
+                .Select(zone => GameMode.GameModeZoneMapping.GetModesForZone(zone, NetworkSystem.Instance.SessionIsPrivate))
+                .ForEach(all_game_modes.UnionWith);
+            ModdedGamemodesPerMode = all_game_modes
+                .Where(game_mode => game_mode != GameModeType.Custom)
+                .ToDictionary(game_mode => game_mode, game_mode => new Gamemode($"MODDED_{game_mode}", $"MODDED {GameMode.GameModeZoneMapping.GetModeName(game_mode)}", game_mode));
+            DefaultModdedGamemodes = [.. ModdedGamemodesPerMode.Values];
 
-            Logging.Info(defaultSelector == null);
-
-            Gamemodes = gamemodes;
-
+            var game_mode_selector = Singleton<UtillaGamemodeSelector>.Instance;
+            Gamemodes = game_mode_selector.GetBaseGameModes();
             pluginInfos = GetPluginInfos();
-
             Gamemodes.AddRange(GetGamemodes(pluginInfos));
-
             Gamemodes.ForEach(AddGamemodeToPrefabPool);
-
-            Logging.Info($"Current Game Mode is set at {currentGameMode}.");
+            Logging.Info($"currentGameMode: {currentGameMode}");
 
             var highlightedIndex = Gamemodes.FindIndex(gm => gm.ID == currentGameMode);
+            Logging.Info($"highlightedIndex: {highlightedIndex}");
 
-            Logging.Info($"Highlighted index is set at {highlightedIndex}");
-
-            defaultSelector.ShowPage(highlightedIndex == -1 ? 0 : Mathf.FloorToInt(highlightedIndex / (float)Constants.PageSize));
+            UtillaGamemodeSelector.PageNumber = highlightedIndex >= 0 ? Mathf.FloorToInt(highlightedIndex / (float)Constants.PageSize) : 0;
+            game_mode_selector.ShowPage();
         }
 
-        public List<Gamemode> GetExtraGameModes()
+        public List<Gamemode> GetPluginInfoModes()
         {
-            List<Gamemode> extraGameModes = new List<Gamemode>();
-
+            List<Gamemode> extraGameModes = [];
             foreach (var info in GetPluginInfos())
             {
                 extraGameModes.AddRange(info.Gamemodes);
@@ -202,16 +196,16 @@ namespace Utilla
         void AddGamemodeToPrefabPool(Gamemode gamemode)
         {
             if (gamemode.GameManager is null) return;
-            if (GameMode.gameModeKeyByName.ContainsKey(gamemode.GamemodeString) || GameMode.gameModeKeyByName.ContainsKey(gamemode.ID))
+            if (GameMode.gameModeKeyByName.ContainsKey(gamemode.ID))
             {
-                Logging.Error($"Game Mode with name '{gamemode.GamemodeString}' or '{gamemode.ID}' already exists.");
+                Logging.Warning($"Game Mode with name '{gamemode.ID}' already exists.");
                 return;
             }
 
             Type gmType = gamemode.GameManager;
             if (gmType == null || !gmType.IsSubclassOf(typeof(GorillaGameManager)))
             {
-                GameModeType? gmKey = Enum.TryParse<GameModeType>(gamemode.BaseGamemode, out var result) ? result : null;
+                GameModeType? gmKey = gamemode.BaseGamemode;
 
                 if (gmKey == null)
                 {
@@ -255,8 +249,8 @@ namespace Utilla
 
             foreach (var pluginInfo in pluginInfos)
             {
-                Logging.Info($"{pluginInfo.Plugin.GetType().Name}: {string.Join(", ", pluginInfo.Gamemodes.Select(gm => gm.GamemodeString))}");
-                if (pluginInfo.Gamemodes.Any(x => gamemode.Contains(x.GamemodeString)))
+                Logging.Info($"{pluginInfo.Plugin.GetType().Name}: {string.Join(", ", pluginInfo.Gamemodes.Select(gm => gm.ID))}");
+                if (pluginInfo.Gamemodes.Any(x => gamemode.Contains(x.ID)))
                 {
                     try
                     {
@@ -281,7 +275,7 @@ namespace Utilla
 
             foreach (var pluginInfo in pluginInfos)
             {
-                if (pluginInfo.Gamemodes.Any(x => gamemode.Contains(x.GamemodeString)))
+                if (pluginInfo.Gamemodes.Any(x => gamemode.Contains(x.ID)))
                 {
                     try
                     {

@@ -1,4 +1,5 @@
 ﻿using BepInEx.Logging;
+using UnityEngine;
 
 namespace Utilla.Tools
 {
@@ -15,7 +16,8 @@ namespace Utilla.Tools
         public static void Log(object data, LogLevel level = LogLevel.Info)
         {
 #if DEBUG
-            Logger.Log(level, data);
+            if (Logger == null) Debug.Log($"[Utilla, {level}] {data}");
+            else Logger.Log(level, data);
 #endif
         }
     }

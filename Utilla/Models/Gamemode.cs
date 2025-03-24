@@ -47,22 +47,17 @@ namespace Utilla.Models
         public string ID { get; }
 
         /// <summary>
-        /// The GamemodeString used in the CustomProperties of the Room
-        /// </summary>
-        public string GamemodeString { get; }
-
-        /// <summary>
         /// The BaseGamemode being inherited
         /// </summary>
-        public string BaseGamemode { get; }
+        public GameModeType? BaseGamemode { get; }
         public Type GameManager { get; }
 
-        public Gamemode(string id, string displayName, string baseGameMode)
+        public Gamemode(string id, string displayName, GameModeType? game_mode_type = null)
         {
             ID = id;
             DisplayName = displayName;
-            BaseGamemode = baseGameMode;
-            GamemodeString = Constants.GamemodePrefix + BaseGamemode;
+            BaseGamemode = game_mode_type;
+            // GamemodeString = game_mode_type.HasValue ? BaseGamemode.ToString() : string.Empty;
         }
 
         public Gamemode(string id, string displayName, Type gameManager)
@@ -70,7 +65,7 @@ namespace Utilla.Models
             ID = id;
             DisplayName = displayName;
             GameManager = gameManager;
-            GamemodeString = Constants.GamemodePrefix + ID;
+            // GamemodeString = Constants.GamemodePrefix + ID;
         }
     }
 }
