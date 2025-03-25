@@ -29,7 +29,7 @@ namespace Utilla.Behaviours
 
         // Pages
 
-        public int PageCount => GamemodeManager.HasInstance ? Mathf.FloorToInt((float)GamemodeManager.Instance.Gamemodes.Count / Constants.PageSize) : Constants.PageSize;
+        public int PageCount;
         public static int PageNumber;
 
         public override async void Initialize()
@@ -58,8 +58,15 @@ namespace Utilla.Behaviours
                 return;
             }
 
-            while (Singleton<GamemodeManager>.Instance.Gamemodes is null || Singleton<GamemodeManager>.Instance.ModdedGamemodesPerMode is null) await Task.Delay(100);
+            bool check_mode = true;
+            while (Singleton<GamemodeManager>.Instance.Gamemodes is null || Singleton<GamemodeManager>.Instance.ModdedGamemodesPerMode is null) 
+            {
+                check_mode = false;
+                await Task.Delay(100);
+            }
+            if (check_mode) CheckGameMode();
 
+            PageCount = Mathf.FloorToInt((float)GetSelectorGameModes().Count / Constants.PageSize);
             ShowPage();
         }
 
@@ -89,8 +96,26 @@ namespace Utilla.Behaviours
         public List<Gamemode> GetSelectorGameModes()
         {
             var game_modes = GetBaseGameModes();
-            game_modes = game_modes.Concat(game_modes.Select(game_mode => game_mode.BaseGamemode.HasValue && Singleton<GamemodeManager>.Instance.ModdedGamemodesPerMode.ContainsKey(game_mode.BaseGamemode.Value) ? Singleton<GamemodeManager>.Instance.ModdedGamemodesPerMode[game_mode.BaseGamemode.Value] : new Gamemode("", "", game_mode_type: null))).Concat(GamemodeManager.Instance.GetPluginInfoModes()).ToList();
+            game_modes = game_modes
+                .Concat(game_modes.Select(game_mode => game_mode.BaseGamemode.HasValue && Singleton<GamemodeManager>.Instance.ModdedGamemodesPerMode.ContainsKey(game_mode.BaseGamemode.Value) ? Singleton<GamemodeManager>.Instance.ModdedGamemodesPerMode[game_mode.BaseGamemode.Value] : new Gamemode("", "", game_mode_type: null)))
+                .Concat(GamemodeManager.Instance.CustomGameModes)
+                .ToList();
             return game_modes;
+        }
+
+        public void CheckGameMode()
+        {
+            var game_mode_names = GetSelectorGameModes().Select(game_mode => game_mode.ID);
+            var current_game_mode = GorillaComputer.instance.currentGameMode.Value;
+            Logging.Info($"current mode: '{current_game_mode}' all modes: {string.Join(", ", game_mode_names.Select(game_mode => string.Format("'{0}'", game_mode)))}");
+            if (!game_mode_names.Contains(current_game_mode))
+            {
+                var replacement_game_mode = current_game_mode.StartsWith(Constants.GamemodePrefix) ? string.Concat(Constants.GamemodePrefix, game_mode_names.ElementAt(0)) : game_mode_names.ElementAt(0);
+                Logging.Info($"replacing current mode with '{replacement_game_mode}'");
+                GorillaComputer.instance.SetGameModeWithoutButton(replacement_game_mode);
+                return;
+            }
+            GorillaComputer.instance.SetGameModeWithoutButton(current_game_mode);
         }
 
         void CreatePageButtons(GameObject templateButton)
@@ -179,11 +204,6 @@ namespace Utilla.Behaviours
         public void ShowPage()
         {
             var game_modes = GetSelectorGameModes();
-            var current_game_mode = GorillaComputer.instance.currentGameMode.Value;
-            if (!game_modes.All(game_mode => game_mode.ID != current_game_mode))
-            {
-                GorillaComputer.instance.SetGameModeWithoutButton(current_game_mode.StartsWith(Constants.GamemodePrefix) ? string.Concat(Constants.GamemodePrefix, GameModeType.Casual.ToString()) : GameModeType.Casual.ToString());
-            }
             var currentGamemodes = game_modes.Skip(PageNumber * Constants.PageSize).Take(Constants.PageSize).ToList();
 
             for (int i = 0; i < modeSelectButtons.Length; i++)

@@ -12,11 +12,10 @@ namespace Utilla
     [BepInPlugin(Constants.Guid, Constants.Name, Constants.Version)]
     public class Plugin : BaseUnityPlugin
     {
-        public void Start()
+        public Plugin()
         {
             Logging.Logger = Logger;
             UtillaPatches.ApplyHarmonyPatches();
-
             DontDestroyOnLoad(this);
             RoomUtils.RoomCode = RoomUtils.RandomString(6); // Generate a random room code in case we need it
         }

@@ -10,6 +10,12 @@ namespace Utilla.HarmonyPatches.Patches
         public static bool OnEnablePatch(GameModeSelectorButtonLayout __instance)
         {
             __instance.SetupButtons();
+            if (__instance.TryGetComponent(out UtillaGamemodeSelector selector))
+            {
+                selector.CheckGameMode();
+                selector.ShowPage();
+            }
+            else __instance.AddComponent<UtillaGamemodeSelector>();
             return false;
         }
         
@@ -24,10 +30,6 @@ namespace Utilla.HarmonyPatches.Patches
         public static void SetupButtonsPostfix(GameModeSelectorButtonLayout __instance)
         {
             SetGameModePatch.PreventSettingMode = false;
-            if (!__instance.GetComponent<UtillaGamemodeSelector>())
-            {
-                __instance.AddComponent<UtillaGamemodeSelector>();
-            }
         }
     }
 }

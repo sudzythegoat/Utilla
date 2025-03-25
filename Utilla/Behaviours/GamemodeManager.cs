@@ -17,6 +17,7 @@ namespace Utilla.Behaviours
     {
         public Dictionary<GameModeType, Gamemode> ModdedGamemodesPerMode;
         public List<Gamemode> DefaultModdedGamemodes;
+        public List<Gamemode> CustomGameModes;
         public List<Gamemode> Gamemodes { get; private set; }
 
         private List<PluginInfo> pluginInfos;
@@ -71,30 +72,26 @@ namespace Utilla.Behaviours
             var game_mode_selector = Singleton<UtillaGamemodeSelector>.Instance;
             Gamemodes = game_mode_selector.GetBaseGameModes();
             pluginInfos = GetPluginInfos();
-            Gamemodes.AddRange(GetGamemodes(pluginInfos));
+            CustomGameModes = GetGamemodes(pluginInfos);
+            Gamemodes.AddRange(DefaultModdedGamemodes.Concat(CustomGameModes));
             Gamemodes.ForEach(AddGamemodeToPrefabPool);
+
+            // re-determine game mode
+            game_mode_selector.CheckGameMode();
+            currentGameMode = GorillaComputer.instance.currentGameMode.Value;
             Logging.Info($"currentGameMode: {currentGameMode}");
 
             var highlightedIndex = Gamemodes.FindIndex(gm => gm.ID == currentGameMode);
             Logging.Info($"highlightedIndex: {highlightedIndex}");
 
-            UtillaGamemodeSelector.PageNumber = highlightedIndex >= 0 ? Mathf.FloorToInt(highlightedIndex / (float)Constants.PageSize) : 0;
+            game_mode_selector.PageCount = Mathf.FloorToInt((float)game_mode_selector.GetSelectorGameModes().Count / Constants.PageSize);
+            UtillaGamemodeSelector.PageNumber = (highlightedIndex >= 0) ? Mathf.FloorToInt((float)highlightedIndex / Constants.PageSize) : 0;
             game_mode_selector.ShowPage();
-        }
-
-        public List<Gamemode> GetPluginInfoModes()
-        {
-            List<Gamemode> extraGameModes = [];
-            foreach (var info in GetPluginInfos())
-            {
-                extraGameModes.AddRange(info.Gamemodes);
-            }
-            return extraGameModes;
         }
 
         public List<Gamemode> GetGamemodes(List<PluginInfo> infos)
         {
-            List<Gamemode> gamemodes = [.. DefaultModdedGamemodes];
+            List<Gamemode> gamemodes = [];
 
             HashSet<Gamemode> additonalGamemodes = [];
             foreach (var info in infos)
