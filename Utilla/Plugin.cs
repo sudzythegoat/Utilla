@@ -14,6 +14,7 @@ namespace Utilla
     {
         public Plugin()
         {
+            Patcher.LoadModifiers();
             Logging.Logger = Logger;
             UtillaPatches.ApplyHarmonyPatches();
             DontDestroyOnLoad(this);
